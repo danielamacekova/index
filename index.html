@@ -1,0 +1,1649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Trinity</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Spline+Sans+Mono:wght@400;500&family=Hanken+Grotesk:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+
+    /* ══════════════════════════════════════════════════════════════
+       BREAKPOINTS (mobile-first, min-width)
+       XS  default   < 576px    single column, hamburger nav
+       SM  576px     576–767px  2-col gallery, slight padding increase
+       MD  768px     768–991px  full nav, hero image, multi-col grids
+       LG  992px     992–1199px 4-col pricing, larger text
+       XL  1200px    1200–1399px fixed-width container centred
+       XXL 1400px    1400px+    wider container, generous spacing
+    ══════════════════════════════════════════════════════════════ */
+
+    /* ── RESPONSIVE TOKENS ── */
+    :root {
+      /* Container horizontal padding */
+      --px: 20px;
+      /* Container max-width (none = full-fluid below XL) */
+      --mw: none;
+      /* Section vertical rhythm */
+      --py-section: 56px;
+      --py-section-lg: 72px;
+
+      /* Design tokens */
+      --bg-warm:      #f1e8d9;
+      --bg-light:     #f7f2e8;
+      --bg-dark:      #550a37;
+      --text-dark:    #2b2118;
+      --text-med:     #594d43;
+      --text-rust:    #b35832;
+      --label-dk:     #e9a679;
+      --price-name:   #ffc28e;
+      --on-dark:      #f7f2e8;
+      --muted-dk:     rgba(247,242,232,.65);
+      --green:        #006e29;
+      --pink:         #d10059;
+      --btn-dk:       #453e3b;
+      --dot-blue:     #457c98;
+      --dot-orange:   #b35832;
+      --dot-green:    #53834e;
+      --serif:        'Spectral', Georgia, serif;
+      --mono:         'Spline Sans Mono', monospace;
+      --sans:         'Hanken Grotesk', system-ui, sans-serif;
+    }
+
+    /* SM */
+    @media (min-width: 576px) {
+      :root { --px: 24px; --py-section: 64px; --py-section-lg: 88px; }
+    }
+    /* MD */
+    @media (min-width: 768px) {
+      :root { --px: 32px; --py-section: 80px; --py-section-lg: 112px; }
+    }
+    /* LG */
+    @media (min-width: 992px) {
+      :root { --px: 44px; --py-section: 96px; --py-section-lg: 128px; }
+    }
+    /* XL — container goes fixed-width */
+    @media (min-width: 1200px) {
+      :root { --px: 60px; --mw: 1200px; --py-section: 104px; --py-section-lg: 144px; }
+    }
+    /* XXL */
+    @media (min-width: 1400px) {
+      :root { --px: 80px; --mw: 1400px; --py-section: 120px; --py-section-lg: 160px; }
+    }
+
+    /* ── RESET ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--sans);
+      color: var(--text-dark);
+      background: var(--bg-light);
+      overflow-x: hidden;
+    }
+
+    /* ── CONTAINER ──
+       Every section's inner wrapper. Handles horizontal centering
+       and padding at every breakpoint via CSS custom properties.
+    ── */
+    .container {
+      width: 100%;
+      max-width: var(--mw);
+      margin-left: auto;
+      margin-right: auto;
+      padding-left: var(--px);
+      padding-right: var(--px);
+    }
+
+    /* ── SHARED TYPOGRAPHY ── */
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--mono);
+      font-weight: 500;
+      font-size: 11px;
+      color: var(--text-rust);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+    .section-label::before {
+      content: '';
+      display: block;
+      width: 22px; height: 1px;
+      background: currentColor;
+      flex-shrink: 0;
+    }
+    .section-label.on-dark { color: var(--label-dk); }
+
+    .section-heading {
+      font-family: var(--serif);
+      font-weight: 500;
+      /* XS: 32px → scales to 64px at XXL */
+      font-size: clamp(32px, 4.5vw, 64px);
+      line-height: 1.05;
+      letter-spacing: -0.4px;
+      color: var(--text-dark);
+    }
+    .section-heading.on-dark { color: var(--on-dark); }
+    .section-heading em { font-style: italic; }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--mono);
+      font-size: 15px;
+      border-radius: 999px;
+      padding: 13px 24px;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity .18s, background .18s;
+      white-space: nowrap;
+    }
+    .btn-pink  { background: var(--pink); color: #fff; }
+    .btn-pink:hover  { background: #b8004f; }
+    .btn-dark  { background: var(--btn-dk); color: var(--on-dark); }
+    .btn-dark:hover  { opacity: .85; }
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid rgba(43,33,24,.35);
+      color: var(--text-dark);
+    }
+    .btn-ghost:hover { background: rgba(43,33,24,.07); }
+
+    /* ── LOGO DOTS ── */
+    .logo-dots { width: 17px; height: 17px; position: relative; flex-shrink: 0; }
+    .logo-dots span { position: absolute; width: 7px; height: 7px; border-radius: 3.5px; }
+    .logo-dots span:nth-child(1) { top: 0;    left: 0;   background: var(--dot-blue); }
+    .logo-dots span:nth-child(2) { top: 0;    right: 0;  background: var(--dot-orange); }
+    .logo-dots span:nth-child(3) { bottom: 0; left: 5px; background: var(--dot-green); }
+
+    /* ── NAVBAR ── */
+    .nav-wrap {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      padding: 20px 12px 0;
+      transition: padding-top .25s ease;
+    }
+    .navbar {
+      /* Navbar uses its own max-width independent of content container */
+      max-width: 1280px;
+      margin: 0 auto;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      background: rgba(255,255,255,.65);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.5);
+      gap: 8px;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+    .nav-logo-text {
+      font-family: var(--serif);
+      font-weight: 600;
+      font-size: 17px;
+      color: var(--text-dark);
+    }
+
+    /* Desktop nav — hidden on XS/SM, shown on MD+ */
+    .nav-links {
+      display: none;
+      gap: 24px;
+      list-style: none;
+      margin: 0 auto;
+    }
+    .nav-links a {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--text-med);
+      text-decoration: none;
+      padding: 4px 2px;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 2px; right: 2px;
+      height: 1px;
+      background: var(--text-med);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .2s ease;
+    }
+    .nav-links a:hover::after { transform: scaleX(1); }
+
+    .nav-cta {
+      display: none; /* hidden below MD */
+      background: var(--btn-dk);
+      color: var(--on-dark);
+      font-family: var(--mono);
+      font-size: 13px;
+      border-radius: 999px;
+      padding: 9px 16px;
+      text-decoration: none;
+      align-items: center;
+      gap: 8px;
+      transition: opacity .18s;
+      flex-shrink: 0;
+      margin-left: auto;
+    }
+    .nav-cta:hover { opacity: .82; }
+
+    /* Hamburger — shown on XS/SM, hidden on MD+ */
+    .nav-hamburger {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      width: 40px; height: 40px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      margin-left: auto;
+      padding: 0;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+    .nav-hamburger span {
+      display: block;
+      width: 20px; height: 1.5px;
+      background: var(--text-dark);
+      border-radius: 2px;
+      transition: transform .3s ease, opacity .2s;
+    }
+    .nav-hamburger[aria-expanded="true"] span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .nav-hamburger[aria-expanded="true"] span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .nav-hamburger[aria-expanded="true"] span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    /* ── MOBILE NAV OVERLAY ── */
+    .mobile-nav {
+      visibility: hidden;
+      opacity: 0;
+      position: fixed;
+      inset: 0;
+      background: rgba(247,242,232,.97);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      z-index: 190;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      transition: opacity .28s ease, visibility .28s;
+    }
+    .mobile-nav.open { visibility: visible; opacity: 1; }
+
+    .mobile-nav-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+    .mobile-nav-links a {
+      font-family: var(--serif);
+      font-size: clamp(26px, 7vw, 40px);
+      font-weight: 500;
+      color: var(--text-dark);
+      text-decoration: none;
+      padding: 10px 28px;
+      display: block;
+      transition: color .18s;
+    }
+    .mobile-nav-links a:hover { color: var(--text-rust); }
+    .mobile-nav-cta { margin-top: 8px; }
+
+    /* ── HERO ── */
+    .hero {
+      background: var(--bg-light);
+      /* XS: top pad = nav height + breathing room */
+      padding-top: 88px;
+      padding-bottom: 56px;
+    }
+    /* Hero container becomes a CSS grid that stacks on XS/SM */
+    .hero .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 36px;
+    }
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+    }
+    .hero-text { display: flex; flex-direction: column; gap: 20px; }
+
+    .hero-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--mono);
+      font-weight: 500;
+      font-size: 11px;
+      color: var(--text-rust);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .hero-label::before {
+      content: '';
+      width: 22px; height: 1px;
+      background: var(--text-rust);
+      display: block;
+      flex-shrink: 0;
+    }
+    .hero-h1 {
+      font-family: var(--serif);
+      font-weight: 500;
+      /* XS: 34px → scales up to 72px at XXL */
+      font-size: clamp(34px, 5.5vw, 72px);
+      line-height: 1.04;
+      letter-spacing: -0.4px;
+      color: var(--text-dark);
+    }
+    .hero-h1 .green  { font-style: italic; color: var(--green); }
+    .hero-h1 .italic { font-style: italic; }
+
+    .hero-sub {
+      font-family: var(--sans);
+      font-size: clamp(15px, 1.7vw, 22px);
+      line-height: 1.6;
+      color: var(--text-med);
+    }
+    .hero-sub u { text-underline-offset: 3px; }
+
+    .hero-divider {
+      width: 140px; height: 1px;
+      background: var(--text-rust);
+      opacity: .4;
+      margin: 28px 0 32px;
+    }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    /* Hero image — hidden on XS/SM, shown on MD+ */
+    .hero-right {
+      display: none;
+      width: 100%;
+      aspect-ratio: 640 / 613;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #f1e8db;
+    }
+    .hero-right img,
+    .img-ph {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--sans);
+      font-size: 13px;
+      color: rgba(43,33,24,.35);
+      background: #c9b89e;
+    }
+
+    /* ── ABOUT ── */
+    .about { background: var(--bg-warm); }
+
+    /* Each sub-section of About acts as its own padded row */
+    .about-model,
+    .about-phases,
+    .about-gallery {
+      padding-top: var(--py-section);
+      padding-bottom: var(--py-section);
+    }
+    .about-phases,
+    .about-gallery { border-top: 1px solid rgba(43,33,24,.1); }
+    .about-gallery { padding-bottom: var(--py-section-lg); }
+
+    .about-model-head {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+    .about-model-desc {
+      font-family: var(--sans);
+      font-size: clamp(15px, 1.6vw, 20px);
+      line-height: 1.6;
+      color: var(--text-med);
+      max-width: 840px;
+    }
+
+    /* Trinity grid — 1 col mobile, 3 col MD+ */
+    .trinity-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+    .trinity-card { display: flex; flex-direction: column; gap: 14px; }
+    .trinity-img {
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      overflow: hidden;
+      background: #b8a48a;
+      margin-bottom: 8px;
+    }
+    .trinity-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .trinity-img .img-ph { background: #b8a48a; height: 100%; }
+    .trinity-name {
+      font-family: var(--serif);
+      font-weight: 600;
+      font-size: 17px;
+      color: var(--text-dark);
+    }
+    .trinity-desc {
+      font-family: var(--serif);
+      font-size: 15px;
+      line-height: 1.5;
+      color: var(--text-med);
+    }
+
+    /* Phases head */
+    .phases-head {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-bottom: 36px;
+    }
+
+    /* Phase tabs — 2×2 pill grid on XS/SM, 4-col underline on MD+ */
+    .phase-tabs {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .phase-tab {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      padding: 12px 14px;
+      cursor: pointer;
+      background: rgba(255,255,255,.5);
+      border: 1px solid rgba(43,33,24,.15);
+      border-radius: 8px;
+      text-align: left;
+      opacity: .55;
+      transition: opacity .2s, background .2s, border-color .2s;
+      position: relative;
+    }
+    .phase-tab.active {
+      opacity: 1;
+      background: rgba(255,255,255,.85);
+      border-color: var(--text-rust);
+    }
+    .phase-tab:hover:not(.active) { opacity: .8; }
+    /* Underline indicator — hidden on XS/SM pill layout */
+    .phase-tab::after { display: none; }
+
+    .phase-tab-period {
+      font-family: var(--mono);
+      font-weight: 500;
+      font-size: 10px;
+      color: var(--text-rust);
+    }
+    .phase-tab-name {
+      font-family: var(--serif);
+      font-size: 14px;
+      color: var(--text-dark);
+    }
+
+    /* Phase panel */
+    .phase-panel { display: none; }
+    .phase-panel.active {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      background: rgba(255,255,255,.55);
+      border-radius: 8px;
+      padding: 24px 20px;
+      margin-top: 0;
+      animation: fadeUp .25s ease;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: none; }
+    }
+    .phase-left { display: flex; flex-direction: column; gap: 12px; }
+    .phase-period {
+      font-family: var(--mono);
+      font-weight: 500;
+      font-size: 11px;
+      color: var(--text-rust);
+    }
+    .phase-title {
+      font-family: var(--serif);
+      font-weight: 500;
+      font-size: clamp(24px, 3.5vw, 46px);
+      line-height: 1.1;
+      color: var(--text-dark);
+    }
+    .phase-status {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 16px;
+      color: var(--text-med);
+    }
+    .phase-desc {
+      font-family: var(--sans);
+      font-size: 15px;
+      line-height: 1.65;
+      color: var(--text-med);
+    }
+    .phase-bullets {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .phase-bullets li {
+      font-family: var(--sans);
+      font-size: 14px;
+      color: var(--text-med);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .phase-bullets li::before {
+      content: '';
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--text-rust);
+      flex-shrink: 0;
+    }
+
+    /* Gallery head */
+    .gallery-head {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+    .gallery-desc {
+      font-family: var(--sans);
+      font-size: clamp(15px, 1.6vw, 20px);
+      line-height: 1.6;
+      color: var(--text-med);
+      max-width: 840px;
+    }
+
+    /* Gallery grid — 1 col XS, 2 col SM+, 3 col MD+ */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+    .gallery-item {
+      border-radius: 6px;
+      overflow: hidden;
+      background: #b8a48a;
+    }
+    .gallery-item:nth-child(-n+3) { height: clamp(180px, 30vw, 380px); }
+    .gallery-item:nth-child(n+4)  { height: clamp(160px, 25vw, 300px); }
+    .gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .gallery-item .img-ph { background: #a89070; height: 100%; }
+    .gallery-cta { display: flex; justify-content: center; }
+
+    /* ── CONTRIBUTION ── */
+    .contribution {
+      background: var(--bg-dark);
+      padding-top: var(--py-section-lg);
+      padding-bottom: var(--py-section-lg);
+    }
+    .contribution-inner {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(36px, 5vw, 72px);
+    }
+    .contrib-head { display: flex; flex-direction: column; gap: 20px; }
+
+    .usage-label {
+      font-family: var(--sans);
+      font-weight: 500;
+      font-size: clamp(16px, 1.8vw, 24px);
+      color: var(--on-dark);
+      margin-bottom: 16px;
+    }
+
+    /* Usage cards — 1 col XS/SM, 3 col MD+ */
+    .usage-cards {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    .usage-card {
+      background: rgba(255,255,255,.16);
+      border-radius: 6px;
+      padding: clamp(20px, 2.5vw, 32px);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .usage-num {
+      font-family: var(--mono);
+      font-weight: 500;
+      font-size: 15px;
+      color: var(--label-dk);
+    }
+    .usage-title {
+      font-family: var(--serif);
+      font-weight: 500;
+      font-size: clamp(17px, 1.9vw, 24px);
+      color: var(--on-dark);
+      line-height: 1.25;
+    }
+    .usage-desc {
+      font-family: var(--sans);
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--muted-dk);
+    }
+
+    .contrib-divider {
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.22) 50%, transparent);
+      border-radius: 999px;
+    }
+
+    /* Pricing — 1 col XS/SM, 2 col MD, 4 col LG+ */
+    .pricing-cards {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      align-items: start;
+    }
+    .pricing-card {
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 8px;
+      padding: clamp(20px, 2.5vw, 32px);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
+      transition: border-color .2s;
+    }
+    .pricing-card:hover { border-color: rgba(255,255,255,.3); }
+    .pricing-card.featured {
+      border-color: rgba(209,0,89,.8);
+      border-radius: 0 0 8px 8px;
+      margin-top: 40px;
+    }
+    .pricing-card.featured:hover { border-color: rgba(209,0,89,1); }
+
+    .pricing-badge {
+      position: absolute;
+      top: -40px; left: -1px; right: -1px;
+      background: var(--pink);
+      color: #fff;
+      font-family: var(--mono);
+      font-size: 15px;
+      text-align: center;
+      padding: 7px 12px;
+      border-radius: 4px 4px 0 0;
+    }
+    .pricing-name {
+      font-family: var(--serif);
+      font-style: italic;
+      font-weight: 500;
+      font-size: 26px;
+      color: var(--price-name);
+    }
+    .pricing-divider {
+      height: 2px;
+      background: linear-gradient(90deg, rgba(255,255,255,.3), transparent);
+      border-radius: 999px;
+    }
+    .pricing-label {
+      font-family: var(--mono);
+      font-weight: 500;
+      font-size: 11px;
+      color: rgba(247,242,232,.5);
+      letter-spacing: 0.3px;
+    }
+    .pricing-price {
+      font-family: var(--serif);
+      font-size: clamp(34px, 4vw, 48px);
+      color: var(--on-dark);
+      line-height: 1;
+      margin-top: 2px;
+    }
+    .pricing-desc {
+      font-family: var(--sans);
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--muted-dk);
+    }
+    .pricing-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--mono);
+      font-size: 14px;
+      padding: 11px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: var(--on-dark);
+      cursor: pointer;
+      text-decoration: none;
+      transition: background .18s, border-color .18s;
+    }
+    .pricing-btn:hover { background: rgba(255,255,255,.14); }
+    .pricing-card.featured .pricing-btn { background: var(--pink); border-color: var(--pink); }
+    .pricing-card.featured .pricing-btn:hover { background: #b8004f; border-color: #b8004f; }
+
+    /* Pricing note — stacked on XS/SM, row on MD+ */
+    .pricing-note {
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 8px;
+      padding: clamp(20px, 2.5vw, 32px);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .pricing-note-text {
+      font-family: var(--sans);
+      font-size: clamp(15px, 1.6vw, 20px);
+      color: rgba(247,242,232,.7);
+      line-height: 1.45;
+    }
+    .btn-outline-light {
+      align-self: flex-start;
+      background: transparent;
+      border: 1px solid rgba(247,242,232,.4);
+      color: var(--on-dark);
+      font-family: var(--mono);
+      font-size: 14px;
+      padding: 11px 20px;
+      border-radius: 999px;
+      cursor: pointer;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: background .18s, border-color .18s;
+    }
+    .btn-outline-light:hover { background: rgba(255,255,255,.1); border-color: rgba(247,242,232,.7); }
+
+    /* ── VOLUNTEER ── */
+    .volunteer {
+      background: var(--bg-light);
+      padding-top: var(--py-section-lg);
+      padding-bottom: var(--py-section-lg);
+    }
+    .volunteer-inner {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(36px, 5vw, 64px);
+    }
+    .vol-head { display: flex; flex-direction: column; gap: 16px; }
+    .vol-sub {
+      font-family: var(--sans);
+      font-size: clamp(15px, 1.6vw, 20px);
+      color: var(--text-med);
+    }
+
+    .accord-heading {
+      font-family: var(--serif);
+      font-weight: 500;
+      font-size: clamp(20px, 2.2vw, 28px);
+      color: var(--text-dark);
+      margin-bottom: 4px;
+    }
+    .accordion { border-top: 1px solid rgba(43,33,24,.12); }
+    .acc-item  { border-bottom: 1px solid rgba(43,33,24,.12); }
+    .acc-trigger {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      padding: 20px 0;
+      background: none;
+      border: none;
+      cursor: pointer;
+      gap: 12px;
+      text-align: left;
+    }
+    .acc-num {
+      font-family: var(--mono);
+      font-weight: 500;
+      font-size: 12px;
+      color: var(--text-rust);
+      min-width: 24px;
+    }
+    .acc-title {
+      font-family: var(--serif);
+      font-size: clamp(18px, 2.2vw, 26px);
+      color: var(--text-dark);
+      flex: 1;
+      transition: color .18s;
+    }
+    .acc-trigger:hover .acc-title { color: var(--text-rust); }
+    .acc-icon {
+      font-family: var(--mono);
+      font-size: 20px;
+      color: var(--text-med);
+      width: 26px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .acc-body {
+      display: none;
+      padding: 0 0 22px 0;
+      font-family: var(--sans);
+      font-size: clamp(14px, 1.4vw, 17px);
+      line-height: 1.7;
+      color: var(--text-med);
+      animation: fadeUp .2s ease;
+    }
+    .acc-item.open .acc-body { display: block; }
+
+    /* Visa box */
+    .visa-box {
+      background: #f1e8db;
+      border-radius: 8px;
+      padding: clamp(24px, 3vw, 40px) clamp(20px, 3vw, 44px);
+    }
+    .visa-heading {
+      font-family: var(--serif);
+      font-weight: 500;
+      font-size: clamp(20px, 2.2vw, 28px);
+      color: var(--text-dark);
+      margin-bottom: 24px;
+    }
+    /* Visa rows — stacked on XS/SM, 3-col grid on MD+ */
+    .visa-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 16px 0;
+      border-top: 1px solid rgba(43,33,24,.1);
+    }
+    .visa-name {
+      font-family: var(--serif);
+      font-size: 17px;
+      color: var(--text-dark);
+    }
+    .visa-dur {
+      font-family: var(--mono);
+      font-weight: 500;
+      font-size: 12px;
+      color: var(--text-rust);
+    }
+    .visa-note {
+      font-family: var(--sans);
+      font-size: 14px;
+      color: var(--text-med);
+      line-height: 1.5;
+    }
+    .visa-cta { display: flex; justify-content: center; margin-top: 28px; }
+
+    /* ── CTA ── */
+    .cta-section {
+      background: var(--bg-light);
+      border-top: 1px solid rgba(43,33,24,.08);
+      padding-top: var(--py-section-lg);
+      padding-bottom: var(--py-section-lg);
+      text-align: center;
+    }
+    .cta-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(24px, 4vw, 44px);
+    }
+    .cta-h {
+      font-family: var(--serif);
+      font-weight: 500;
+      /* XS: 44px → scales to 116px at XXL */
+      font-size: clamp(44px, 8.5vw, 116px);
+      line-height: 0.97;
+      letter-spacing: -1.5px;
+      color: var(--text-dark);
+    }
+    .cta-desc {
+      font-family: var(--sans);
+      font-size: clamp(15px, 1.6vw, 20px);
+      line-height: 1.65;
+      color: var(--text-med);
+      max-width: 560px;
+    }
+    .cta-actions {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .btn-back {
+      font-family: var(--mono);
+      font-size: 14px;
+      color: var(--text-dark);
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity .18s;
+    }
+    .btn-back:hover { opacity: .5; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--bg-warm);
+      padding-top: 36px;
+      padding-bottom: 36px;
+    }
+    /* Footer inner — column on XS/SM, row on MD+ */
+    .footer-inner {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .footer-brand { display: flex; flex-direction: column; gap: 4px; }
+    .footer-logo-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .footer-logo-text {
+      font-family: var(--serif);
+      font-weight: 600;
+      font-size: 17px;
+      color: var(--text-dark);
+    }
+    .footer-copy { font-family: var(--sans); font-size: 14px; color: var(--text-med); }
+
+    .footer-contact-label {
+      font-family: var(--mono);
+      font-weight: 500;
+      font-size: 10px;
+      color: var(--text-rust);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .footer-email {
+      font-family: var(--sans);
+      font-size: 14px;
+      color: var(--text-dark);
+      text-decoration: none;
+      display: block;
+    }
+    .footer-email:hover { text-decoration: underline; }
+
+    .footer-social { display: flex; gap: 10px; align-items: center; }
+    .social-icon {
+      width: 36px; height: 36px;
+      border: 1.5px solid var(--text-dark);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-dark);
+      text-decoration: none;
+      transition: opacity .18s;
+    }
+    .social-icon:hover { opacity: .5; }
+    .social-icon svg { width: 16px; height: 16px; }
+
+
+    /* ══════════════════════════════════════════════════════════════
+       BREAKPOINT OVERRIDES — mobile-first (min-width)
+    ══════════════════════════════════════════════════════════════ */
+
+    /* ── SM: 576px ─────────────────────────── */
+    @media (min-width: 576px) {
+      /* Gallery 2-col */
+      .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+
+      /* Pricing 2-col */
+      .pricing-cards { grid-template-columns: repeat(2, 1fr); }
+
+      /* Pricing note row */
+      .pricing-note { flex-direction: row; align-items: center; justify-content: space-between; }
+      .btn-outline-light { align-self: auto; }
+    }
+
+    /* ── MD: 768px ─────────────────────────── */
+    @media (min-width: 768px) {
+      /* Nav: hide hamburger, show desktop links */
+      .nav-hamburger { display: none; }
+      .nav-links     { display: flex; }
+      .nav-cta       { display: flex; }
+      .navbar        { height: 68px; padding: 0 24px; }
+
+      /* Hero: 2-col, show image */
+      .hero { padding-top: 120px; padding-bottom: 80px; }
+      .hero .container {
+        grid-template-columns: 1fr 1fr;
+        gap: clamp(28px, 3vw, 52px);
+        align-items: start;
+      }
+      .hero-left { padding-top: 36px; }
+      .hero-right { display: block; }
+      .hero-divider { margin-top: 36px; margin-bottom: 40px; }
+
+      /* About model: extra bottom margin */
+      .about-model-head { margin-bottom: clamp(44px, 5vw, 72px); }
+
+      /* Trinity: 3-col */
+      .trinity-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: clamp(20px, 3vw, 56px);
+      }
+
+      /* Phase tabs: 4-col underline style */
+      .phase-tabs {
+        grid-template-columns: repeat(4, 1fr);
+        border-bottom: 1px solid rgba(43,33,24,.12);
+        gap: 0;
+        margin-bottom: 4px;
+      }
+      .phase-tab {
+        background: none;
+        border: none;
+        border-radius: 0;
+        padding: 0 12px 16px 0;
+        opacity: .38;
+      }
+      .phase-tab.active {
+        background: none;
+        border-color: transparent;
+        opacity: 1;
+      }
+      .phase-tab::after {
+        display: block;
+        content: '';
+        position: absolute;
+        bottom: -1px; left: 0; right: 12px;
+        height: 2px;
+        background: var(--text-rust);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform .25s ease;
+      }
+      .phase-tab.active::after { transform: scaleX(1); }
+      .phase-tab:hover:not(.active) { opacity: .65; background: none; }
+      .phase-tab-period { font-size: 12px; }
+      .phase-tab-name   { font-size: 18px; }
+
+      /* Phase panel: 2-col */
+      .phase-panel.active {
+        grid-template-columns: 1fr 220px;
+        gap: 44px;
+        padding: clamp(28px, 3vw, 48px);
+        margin-top: 4px;
+      }
+
+      /* Gallery: 3-col */
+      .gallery-grid { grid-template-columns: repeat(3, 1fr); }
+
+      /* Usage cards: 3-col */
+      .usage-cards { grid-template-columns: repeat(3, 1fr); }
+
+      /* Visa rows: 3-col grid */
+      .visa-row {
+        display: grid;
+        grid-template-columns: 2fr 1fr 2fr;
+        gap: 16px;
+        padding: 18px 0;
+        flex-direction: unset;
+      }
+      .visa-name { font-size: 18px; }
+
+      /* Accordion body indent */
+      .acc-body { padding-left: 36px; }
+
+      /* Footer: row */
+      .footer-inner {
+        flex-direction: row;
+        align-items: center;
+        gap: 0;
+      }
+      .footer-contact { margin-left: auto; }
+      .footer-social  { margin-left: 36px; }
+    }
+
+    /* ── LG: 992px ─────────────────────────── */
+    @media (min-width: 992px) {
+      /* Hero top padding */
+      .hero { padding-top: 148px; }
+
+      /* Pricing: 4-col */
+      .pricing-cards { grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    }
+
+    /* ── XL: 1200px — fixed-width container ── */
+    @media (min-width: 1200px) {
+      .nav-wrap { padding-top: 28px; }
+
+      /* Phase panel wider right column */
+      .phase-panel.active { grid-template-columns: 1fr 260px; }
+    }
+
+    /* ── XXL: 1400px — wider, more generous ── */
+    @media (min-width: 1400px) {
+      .navbar { max-width: 1400px; }
+    }
+
+  </style>
+</head>
+<body>
+
+<!-- ══ MOBILE NAV OVERLAY ══ -->
+<div class="mobile-nav" id="mobileNav" aria-hidden="true" role="dialog" aria-label="Site menu">
+  <ul class="mobile-nav-links">
+    <li><a href="#about">About project</a></li>
+    <li><a href="#about">Workshops</a></li>
+    <li><a href="#contribution">Contribution</a></li>
+    <li><a href="#volunteer">Contact</a></li>
+  </ul>
+  <div class="mobile-nav-cta">
+    <a href="#volunteer" class="btn btn-dark">Contact us</a>
+  </div>
+</div>
+
+<!-- ══ NAVBAR ══ -->
+<nav class="nav-wrap" aria-label="Main navigation">
+  <div class="navbar">
+    <a href="#hero" class="nav-logo">
+      <div class="logo-dots"><span></span><span></span><span></span></div>
+      <span class="nav-logo-text">Project Trinity</span>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="#about">About project</a></li>
+      <li><a href="#about">Workshops</a></li>
+      <li><a href="#contribution">Contribution</a></li>
+      <li><a href="#volunteer">Contact</a></li>
+    </ul>
+
+    <a href="#volunteer" class="nav-cta">Contact us</a>
+
+    <button class="nav-hamburger" id="hamburger"
+            aria-label="Open menu" aria-expanded="false" aria-controls="mobileNav">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ══ HERO ══ -->
+<section class="hero" id="hero">
+  <div class="container">
+    <div class="hero-left">
+      <div class="hero-text">
+        <div class="hero-label">Kumbalgama South · Sri Lanka</div>
+        <h1 class="hero-h1">Turning waste into a <span class="green">future</span> for <span class="italic">Sri Lanka.</span></h1>
+        <p class="hero-sub">We aim to be living proof that <u>human presence</u> can <u>restore land</u> rather than deplete it.</p>
+      </div>
+      <div class="hero-divider"></div>
+      <div class="hero-actions">
+        <a href="#about" class="btn btn-pink">About the project</a>
+        <a href="#contribution" class="btn btn-dark">Become a member</a>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <img src="images/hero.jpg" alt="Aerial view of Project Trinity site in Kumbalgama, Sri Lanka"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="img-ph" style="display:none">Hero image</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ ABOUT ══ -->
+<section class="about" id="about">
+
+  <!-- Community model -->
+  <div class="about-model">
+    <div class="container">
+      <div class="about-model-head">
+        <span class="section-label">The project</span>
+        <h2 class="section-heading">A model any community<br>can replicate</h2>
+        <p class="about-model-desc">We're building a place where clean water, renewable energy, food security, and waste-to-resource systems work together as one living organism.</p>
+      </div>
+      <div class="trinity-grid">
+        <div class="trinity-card">
+          <div class="trinity-img">
+            <img src="images/inner-work.jpg" alt="Inner work"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="img-ph" style="display:none"></div>
+          </div>
+          <h3 class="trinity-name">Inner work</h3>
+          <p class="trinity-desc">Breathwork, self-healing, and authentic embodiment</p>
+        </div>
+        <div class="trinity-card">
+          <div class="trinity-img">
+            <img src="images/communal-work.jpg" alt="Communal work"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="img-ph" style="display:none"></div>
+          </div>
+          <h3 class="trinity-name">Communal work</h3>
+          <p class="trinity-desc">Skill-sharing, language exchange, and co-creation</p>
+        </div>
+        <div class="trinity-card">
+          <div class="trinity-img">
+            <img src="images/environmental-work.jpg" alt="Environmental work"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="img-ph" style="display:none"></div>
+          </div>
+          <h3 class="trinity-name">Environmental work</h3>
+          <p class="trinity-desc">Composting, soil regeneration and turning waste into infrastructure</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Roadmap / Phases -->
+  <div class="about-phases">
+    <div class="container">
+      <div class="phases-head">
+        <span class="section-label">The roadmap</span>
+        <h2 class="section-heading">A phased model,<br>already in motion</h2>
+      </div>
+
+      <div class="phase-tabs" role="tablist" aria-label="Project phases">
+        <button class="phase-tab active" role="tab" aria-selected="true"  aria-controls="phase-1" data-phase="1">
+          <span class="phase-tab-period">Phase 1 · Apr–Jun 2026</span>
+          <span class="phase-tab-name">Foundation</span>
+        </button>
+        <button class="phase-tab" role="tab" aria-selected="false" aria-controls="phase-2" data-phase="2">
+          <span class="phase-tab-period">Phase 2 · Jul–Aug 2026</span>
+          <span class="phase-tab-name">The Off-Season Build</span>
+        </button>
+        <button class="phase-tab" role="tab" aria-selected="false" aria-controls="phase-3" data-phase="3">
+          <span class="phase-tab-period">Phase 3 · Sept–Oct 2026</span>
+          <span class="phase-tab-name">Scaling the model</span>
+        </button>
+        <button class="phase-tab" role="tab" aria-selected="false" aria-controls="phase-4" data-phase="4">
+          <span class="phase-tab-period">Phase 4 · Nov 2026–Apr 2027</span>
+          <span class="phase-tab-name">On-season launch</span>
+        </button>
+      </div>
+
+      <div id="phase-1" class="phase-panel active" role="tabpanel">
+        <div class="phase-left">
+          <span class="phase-period">Phase 1 · Apr–Jun 2026</span>
+          <h3 class="phase-title">Foundation</h3>
+          <p class="phase-status">Active</p>
+          <p class="phase-desc">Weekly Sinhala and English classes, breathwork sessions, theatre improv workshops, and community fire gatherings are running. Reclaimed wood furniture has been built on-site, and boundary land is being regenerated through Project Phoenix.</p>
+        </div>
+        <ul class="phase-bullets">
+          <li>Weekly Sinhala &amp; English classes</li>
+          <li>Breathwork sessions</li>
+          <li>Theatre improv workshops</li>
+          <li>Community fire gatherings</li>
+        </ul>
+      </div>
+
+      <div id="phase-2" class="phase-panel" role="tabpanel">
+        <div class="phase-left">
+          <span class="phase-period">Phase 2 · Jul–Aug 2026</span>
+          <h3 class="phase-title">The Off-Season Build</h3>
+          <p class="phase-status">The monsoon season becomes our build window</p>
+          <p class="phase-desc">We're laying the infrastructure that powers everything else: a pilot plastics workshop, composting bays, an outdoor fabrication roof, and first on-site biogas experiments.</p>
+        </div>
+        <ul class="phase-bullets">
+          <li>Plastic workshops</li>
+          <li>Composting bays</li>
+          <li>Outdoor fabrication roof</li>
+          <li>Biogas experiments</li>
+        </ul>
+      </div>
+
+      <div id="phase-3" class="phase-panel" role="tabpanel">
+        <div class="phase-left">
+          <span class="phase-period">Phase 3 · Sept–Oct 2026</span>
+          <h3 class="phase-title">Scaling the model</h3>
+          <p class="phase-status">Pilot systems become full production</p>
+          <p class="phase-desc">We open a dedicated waste-to-resource facility, install an underground biogas digester, and complete an integrated water collection and filtration system.</p>
+        </div>
+        <ul class="phase-bullets">
+          <li>Waste-to-resource facility</li>
+          <li>Underground biogas digester</li>
+          <li>Water collection &amp; filtration</li>
+        </ul>
+      </div>
+
+      <div id="phase-4" class="phase-panel" role="tabpanel">
+        <div class="phase-left">
+          <span class="phase-period">Phase 4 · Nov 2026–Apr 2027</span>
+          <h3 class="phase-title">On-season launch</h3>
+          <p class="phase-status">The sanctuary opens</p>
+          <p class="phase-desc">The workshop becomes a communal fusion kitchen and co-working hub. Commercial waste processing begins — generating sustainable income for local families.</p>
+        </div>
+        <ul class="phase-bullets">
+          <li>Fusion kitchen + co-working hub</li>
+          <li>Open to global community</li>
+          <li>Commercial waste processing</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gallery -->
+  <div class="about-gallery">
+    <div class="container">
+      <div class="gallery-head">
+        <span class="section-label">Gallery</span>
+        <h2 class="section-heading">The project in motion</h2>
+        <p class="gallery-desc">We're building a place where clean water, renewable energy, food security, and waste-to-resource systems work together as one living organism.</p>
+      </div>
+      <div class="gallery-grid">
+        <div class="gallery-item"><img src="images/gallery-1.jpg" alt="" onerror="this.parentElement.querySelector('.img-ph').style.display='flex';this.style.display='none'"><div class="img-ph" style="display:none"></div></div>
+        <div class="gallery-item"><img src="images/gallery-2.jpg" alt="" onerror="this.parentElement.querySelector('.img-ph').style.display='flex';this.style.display='none'"><div class="img-ph" style="display:none"></div></div>
+        <div class="gallery-item"><img src="images/gallery-3.jpg" alt="" onerror="this.parentElement.querySelector('.img-ph').style.display='flex';this.style.display='none'"><div class="img-ph" style="display:none"></div></div>
+        <div class="gallery-item"><img src="images/gallery-4.jpg" alt="" onerror="this.parentElement.querySelector('.img-ph').style.display='flex';this.style.display='none'"><div class="img-ph" style="display:none"></div></div>
+        <div class="gallery-item"><img src="images/gallery-5.jpg" alt="" onerror="this.parentElement.querySelector('.img-ph').style.display='flex';this.style.display='none'"><div class="img-ph" style="display:none"></div></div>
+        <div class="gallery-item"><img src="images/gallery-6.jpg" alt="" onerror="this.parentElement.querySelector('.img-ph').style.display='flex';this.style.display='none'"><div class="img-ph" style="display:none"></div></div>
+      </div>
+      <div class="gallery-cta">
+        <a href="https://instagram.com" class="btn btn-ghost" target="_blank" rel="noopener">See more on instagram</a>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ══ CONTRIBUTION ══ -->
+<section class="contribution" id="contribution">
+  <div class="container">
+    <div class="contribution-inner">
+
+      <div class="contrib-head">
+        <span class="section-label on-dark">Membership &amp; contribution</span>
+        <h2 class="section-heading on-dark">Become a member of <em>Project Trinity</em></h2>
+      </div>
+
+      <div>
+        <p class="usage-label">How your contribution is used</p>
+        <div class="usage-cards">
+          <div class="usage-card">
+            <span class="usage-num">01</span>
+            <h3 class="usage-title">Waste-to-resource engineering</h3>
+            <p class="usage-desc">Recycling centres and pyrolysis systems that eliminate plastic waste in Kumbalgama.</p>
+          </div>
+          <div class="usage-card">
+            <span class="usage-num">02</span>
+            <h3 class="usage-title">Regenerative agroforestry</h3>
+            <p class="usage-desc">Food forests, living boundaries, and soil restoration that make the land more productive every year.</p>
+          </div>
+          <div class="usage-card">
+            <span class="usage-num">03</span>
+            <h3 class="usage-title">Fair-wage employment</h3>
+            <p class="usage-desc">Local villagers are equal partners in the project.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="contrib-divider"></div>
+
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="pricing-cards">
+          <div class="pricing-card">
+            <span class="pricing-name">Core</span>
+            <div class="pricing-divider"></div>
+            <div>
+              <p class="pricing-label">MONTHLY PRICE</p>
+              <p class="pricing-price">4.99 €</p>
+            </div>
+            <p class="pricing-desc">The most common choice to become an active member.</p>
+            <a href="#" class="pricing-btn">Become member</a>
+          </div>
+          <div class="pricing-card">
+            <span class="pricing-name">Sustainer</span>
+            <div class="pricing-divider"></div>
+            <div>
+              <p class="pricing-label">MONTHLY PRICE</p>
+              <p class="pricing-price">8.99 €</p>
+            </div>
+            <p class="pricing-desc">For those who want to give a little more.</p>
+            <a href="#" class="pricing-btn">Become member</a>
+          </div>
+          <div class="pricing-card featured">
+            <div class="pricing-badge">Most popular</div>
+            <span class="pricing-name">Patron</span>
+            <div class="pricing-divider"></div>
+            <div>
+              <p class="pricing-label">MONTHLY PRICE</p>
+              <p class="pricing-price">15.99 €</p>
+            </div>
+            <p class="pricing-desc">High-impact supporters.</p>
+            <a href="#" class="pricing-btn">Become member</a>
+          </div>
+          <div class="pricing-card">
+            <span class="pricing-name">Visionary</span>
+            <div class="pricing-divider"></div>
+            <div>
+              <p class="pricing-label">MONTHLY PRICE</p>
+              <p class="pricing-price">29.99 €</p>
+            </div>
+            <p class="pricing-desc">Early-stage foundational support.</p>
+            <a href="#" class="pricing-btn">Become member</a>
+          </div>
+        </div>
+
+        <div class="pricing-note">
+          <p class="pricing-note-text">Not ready for a membership? A one-time contribution goes just as far.</p>
+          <a href="mailto:trinityholisticwellness1119@gmail.com" class="btn-outline-light">Write to us</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══ VOLUNTEER ══ -->
+<section class="volunteer" id="volunteer">
+  <div class="container">
+    <div class="volunteer-inner">
+
+      <div class="vol-head">
+        <span class="section-label">Get involved</span>
+        <h2 class="section-heading">Get involved as a volunteer</h2>
+        <p class="vol-sub">You don't need money to make a difference. We welcome volunteers!</p>
+      </div>
+
+      <div>
+        <p class="accord-heading">Volunteer areas</p>
+        <div class="accordion" role="list">
+          <div class="acc-item open" data-area="engineering">
+            <button class="acc-trigger" aria-expanded="true">
+              <span class="acc-num">01</span>
+              <span class="acc-title">Engineering &amp; fabrication</span>
+              <span class="acc-icon" aria-hidden="true">−</span>
+            </button>
+            <div class="acc-body" role="region">
+              Build and refine plastic recycling machines, biogas systems, and reclaimed-material structures.
+            </div>
+          </div>
+          <div class="acc-item" data-area="ecology">
+            <button class="acc-trigger" aria-expanded="false">
+              <span class="acc-num">02</span>
+              <span class="acc-title">Land &amp; ecology</span>
+              <span class="acc-icon" aria-hidden="true">+</span>
+            </button>
+            <div class="acc-body" role="region">
+              Work with soil biology, plant food forests, and design water management systems.
+            </div>
+          </div>
+          <div class="acc-item" data-area="media">
+            <button class="acc-trigger" aria-expanded="false">
+              <span class="acc-num">03</span>
+              <span class="acc-title">Media &amp; operations</span>
+              <span class="acc-icon" aria-hidden="true">+</span>
+            </button>
+            <div class="acc-body" role="region">
+              Document the build through photo and video, maintain project blueprints, and support community gatherings.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="visa-box">
+        <h3 class="visa-heading">Visa options</h3>
+        <div class="visa-row">
+          <span class="visa-name">Tourist visa</span>
+          <span class="visa-dur">30–180 days</span>
+          <span class="visa-note"></span>
+        </div>
+        <div class="visa-row">
+          <span class="visa-name">Digital nomad visa</span>
+          <span class="visa-dur">1 year</span>
+          <span class="visa-note">Requires proof of $2,000/month remote income.</span>
+        </div>
+        <div class="visa-row">
+          <span class="visa-name">Volunteer residence permit</span>
+          <span class="visa-dur">1 year+</span>
+          <span class="visa-note">Requires a formal invitation from Trinity Holistic Wellness PVT LTD, arranged before arrival.</span>
+        </div>
+        <div class="visa-cta">
+          <a href="#" class="btn btn-dark" id="vol-cta">I want to volunteer</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══ CTA ══ -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-inner">
+      <h2 class="cta-h">Be a keystone,<br>not a donor.</h2>
+      <p class="cta-desc">We're funding the workshop ahead of the May–July build season, the one window when the ground is ready. Come build the foundation of a place that proves humans can make an ecosystem healthier.</p>
+      <div class="cta-actions">
+        <a href="#contribution" class="btn btn-pink">Contribute</a>
+        <a href="#hero" class="btn-back">Back to the top</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="container footer-inner">
+    <div class="footer-brand">
+      <a href="#hero" class="footer-logo-link">
+        <div class="logo-dots"><span></span><span></span><span></span></div>
+        <span class="footer-logo-text">Project Trinity</span>
+      </a>
+      <p class="footer-copy">© 2026</p>
+    </div>
+
+    <div class="footer-contact">
+      <p class="footer-contact-label">Contact</p>
+      <a href="mailto:trinityholisticwellness1119@gmail.com" class="footer-email">trinityholisticwellness1119@gmail.com</a>
+    </div>
+
+    <div class="footer-social">
+      <a href="#" class="social-icon" aria-label="Instagram" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="20" height="20" rx="5"/>
+          <circle cx="12" cy="12" r="5"/>
+          <circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/>
+        </svg>
+      </a>
+      <a href="#" class="social-icon" aria-label="YouTube" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22.54 6.42A2.78 2.78 0 0 0 20.59 4.47C18.88 4 12 4 12 4S5.12 4 3.41 4.47A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.95C5.12 20 12 20 12 20s6.88 0 8.59-.47a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58Z"/>
+          <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="currentColor" stroke="none"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ── Phase tabs ──
+  document.querySelectorAll('.phase-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.phase-tab').forEach(t => {
+        t.classList.remove('active');
+        t.setAttribute('aria-selected', 'false');
+      });
+      document.querySelectorAll('.phase-panel').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      tab.setAttribute('aria-selected', 'true');
+      document.getElementById('phase-' + tab.dataset.phase).classList.add('active');
+    });
+  });
+
+  // ── Accordion ──
+  const volCta = document.getElementById('vol-cta');
+  document.querySelectorAll('.acc-item').forEach(item => {
+    item.querySelector('.acc-trigger').addEventListener('click', () => {
+      const wasOpen = item.classList.contains('open');
+      document.querySelectorAll('.acc-item').forEach(i => {
+        i.classList.remove('open');
+        i.querySelector('.acc-trigger').setAttribute('aria-expanded', 'false');
+        i.querySelector('.acc-icon').textContent = '+';
+      });
+      if (!wasOpen) {
+        item.classList.add('open');
+        item.querySelector('.acc-trigger').setAttribute('aria-expanded', 'true');
+        item.querySelector('.acc-icon').textContent = '−';
+        const area = item.dataset.area;
+        volCta.textContent = area === 'engineering' ? 'I want to volunteer' : 'Contact us';
+        volCta.href = area === 'engineering' ? '#' : 'mailto:trinityholisticwellness1119@gmail.com';
+      }
+    });
+  });
+
+  // ── Navbar scroll shrink ──
+  const navWrap = document.querySelector('.nav-wrap');
+  window.addEventListener('scroll', () => {
+    navWrap.style.paddingTop = window.scrollY > 20 ? '8px' : '20px';
+  }, { passive: true });
+
+  // ── Hamburger ──
+  const hamburger = document.getElementById('hamburger');
+  const mobileNav = document.getElementById('mobileNav');
+
+  function closeMenu() {
+    hamburger.setAttribute('aria-expanded', 'false');
+    mobileNav.classList.remove('open');
+    mobileNav.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  hamburger.addEventListener('click', () => {
+    const isOpen = hamburger.getAttribute('aria-expanded') === 'true';
+    if (isOpen) {
+      closeMenu();
+    } else {
+      hamburger.setAttribute('aria-expanded', 'true');
+      mobileNav.classList.add('open');
+      mobileNav.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+  });
+
+  mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+</script>
+
+</body>
+</html>
