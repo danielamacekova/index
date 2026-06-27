@@ -77,6 +77,7 @@
     html { scroll-behavior: smooth; }
     body {
       font-family: var(--sans);
+      font-size: 16px;
       color: var(--text-dark);
       background: var(--bg-light);
       overflow-x: hidden;
@@ -102,7 +103,7 @@
       gap: 10px;
       font-family: var(--mono);
       font-weight: 500;
-      font-size: 11px;
+      font-size: 14px;
       color: var(--text-rust);
       text-transform: uppercase;
       letter-spacing: 0.6px;
@@ -183,6 +184,7 @@
       border-radius: 999px;
       border: 1px solid rgba(255,255,255,.5);
       gap: 8px;
+      position: relative;
     }
     .nav-logo {
       display: flex;
@@ -203,11 +205,10 @@
       display: none;
       gap: 24px;
       list-style: none;
-      margin: 0 auto;
     }
     .nav-links a {
       font-family: var(--mono);
-      font-size: 13px;
+      font-size: 14px;
       color: var(--text-med);
       text-decoration: none;
       padding: 4px 2px;
@@ -218,19 +219,20 @@
       position: absolute;
       bottom: 0; left: 2px; right: 2px;
       height: 1px;
-      background: var(--text-med);
+      background: var(--pink);
       transform: scaleX(0);
       transform-origin: left;
       transition: transform .2s ease;
     }
-    .nav-links a:hover::after { transform: scaleX(1); }
+    .nav-links a:hover::after,
+    .nav-links a.active::after { transform: scaleX(1); }
 
     .nav-cta {
       display: none; /* hidden below MD */
       background: var(--btn-dk);
       color: var(--on-dark);
       font-family: var(--mono);
-      font-size: 13px;
+      font-size: 14px;
       border-radius: 999px;
       padding: 9px 16px;
       text-decoration: none;
@@ -305,7 +307,8 @@
       display: block;
       transition: color .18s;
     }
-    .mobile-nav-links a:hover { color: var(--text-rust); }
+    .mobile-nav-links a:hover,
+    .mobile-nav-links a.active { color: var(--text-rust); }
     .mobile-nav-cta { margin-top: 8px; }
 
     /* ── HERO ── */
@@ -324,6 +327,8 @@
     .hero-left {
       display: flex;
       flex-direction: column;
+      gap: 68px;
+      justify-content: center;
     }
     .hero-text { display: flex; flex-direction: column; gap: 20px; }
 
@@ -333,7 +338,7 @@
       gap: 10px;
       font-family: var(--mono);
       font-weight: 500;
-      font-size: 11px;
+      font-size: 14px;
       color: var(--text-rust);
       text-transform: uppercase;
       letter-spacing: 0.3px;
@@ -363,14 +368,13 @@
       line-height: 1.6;
       color: var(--text-med);
     }
-    .hero-sub u { text-underline-offset: 3px; }
-
-    .hero-divider {
-      width: 140px; height: 1px;
-      background: var(--text-rust);
-      opacity: .4;
-      margin: 28px 0 32px;
+    .hero-sub u {
+      text-decoration: underline;
+      text-decoration-color: var(--green);
+      text-decoration-thickness: 2px;
+      text-underline-offset: 4px;
     }
+
     .hero-actions {
       display: flex;
       flex-wrap: wrap;
@@ -395,7 +399,7 @@
       align-items: center;
       justify-content: center;
       font-family: var(--sans);
-      font-size: 13px;
+      font-size: 14px;
       color: rgba(43,33,24,.35);
       background: #c9b89e;
     }
@@ -434,14 +438,16 @@
       grid-template-columns: 1fr;
       gap: 40px;
     }
-    .trinity-card { display: flex; flex-direction: column; gap: 14px; }
+    .trinity-card { display: flex; flex-direction: column; gap: 14px; text-align: center; }
     .trinity-img {
       width: 100%;
+      max-width: 305px;
+      max-height: 305px;
       aspect-ratio: 1;
       border-radius: 50%;
       overflow: hidden;
       background: #b8a48a;
-      margin-bottom: 8px;
+      margin: 0 auto 8px;
     }
     .trinity-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .trinity-img .img-ph { background: #b8a48a; height: 100%; }
@@ -499,7 +505,7 @@
     .phase-tab-period {
       font-family: var(--mono);
       font-weight: 500;
-      font-size: 10px;
+      font-size: 14px;
       color: var(--text-rust);
     }
     .phase-tab-name {
@@ -517,7 +523,7 @@
       background: rgba(255,255,255,.55);
       border-radius: 8px;
       padding: 24px 20px;
-      margin-top: 0;
+      margin-top: 24px;
       animation: fadeUp .25s ease;
     }
     @keyframes fadeUp {
@@ -528,7 +534,7 @@
     .phase-period {
       font-family: var(--mono);
       font-weight: 500;
-      font-size: 11px;
+      font-size: 14px;
       color: var(--text-rust);
     }
     .phase-title {
@@ -546,7 +552,7 @@
     }
     .phase-desc {
       font-family: var(--sans);
-      font-size: 15px;
+      font-size: 16px;
       line-height: 1.65;
       color: var(--text-med);
     }
@@ -558,7 +564,7 @@
     }
     .phase-bullets li {
       font-family: var(--sans);
-      font-size: 14px;
+      font-size: 16px;
       color: var(--text-med);
       display: flex;
       align-items: center;
@@ -670,8 +676,9 @@
     .pricing-cards {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 14px;
-      align-items: start;
+      gap: 24px;
+      align-items: stretch;
+      padding-top: 40px;
     }
     .pricing-card {
       background: rgba(255,255,255,.05);
@@ -694,7 +701,7 @@
 
     .pricing-badge {
       position: absolute;
-      top: -40px; left: -1px; right: -1px;
+      bottom: 100%; left: -1px; right: -1px;
       background: var(--pink);
       color: #fff;
       font-family: var(--mono);
@@ -718,7 +725,7 @@
     .pricing-label {
       font-family: var(--mono);
       font-weight: 500;
-      font-size: 11px;
+      font-size: 14px;
       color: rgba(247,242,232,.5);
       letter-spacing: 0.3px;
     }
@@ -750,6 +757,7 @@
       cursor: pointer;
       text-decoration: none;
       transition: background .18s, border-color .18s;
+      margin-top: auto;
     }
     .pricing-btn:hover { background: rgba(255,255,255,.14); }
     .pricing-card.featured .pricing-btn { background: var(--pink); border-color: var(--pink); }
@@ -767,7 +775,7 @@
     }
     .pricing-note-text {
       font-family: var(--sans);
-      font-size: clamp(15px, 1.6vw, 20px);
+      font-size: 16px;
       color: rgba(247,242,232,.7);
       line-height: 1.45;
     }
@@ -828,7 +836,7 @@
     .acc-num {
       font-family: var(--mono);
       font-weight: 500;
-      font-size: 12px;
+      font-size: 14px;
       color: var(--text-rust);
       min-width: 24px;
     }
@@ -888,7 +896,7 @@
     .visa-dur {
       font-family: var(--mono);
       font-weight: 500;
-      font-size: 12px;
+      font-size: 14px;
       color: var(--text-rust);
     }
     .visa-note {
@@ -978,7 +986,7 @@
     .footer-contact-label {
       font-family: var(--mono);
       font-weight: 500;
-      font-size: 10px;
+      font-size: 14px;
       color: var(--text-rust);
       letter-spacing: 2px;
       text-transform: uppercase;
@@ -1030,7 +1038,7 @@
     @media (min-width: 768px) {
       /* Nav: hide hamburger, show desktop links */
       .nav-hamburger { display: none; }
-      .nav-links     { display: flex; }
+      .nav-links     { display: flex; position: absolute; left: 50%; transform: translateX(-50%); }
       .nav-cta       { display: flex; }
       .navbar        { height: 68px; padding: 0 24px; }
 
@@ -1039,13 +1047,11 @@
       .hero .container {
         grid-template-columns: 1fr 1fr;
         gap: clamp(28px, 3vw, 52px);
-        align-items: start;
+        align-items: stretch;
       }
       .hero-left { padding-top: 36px; }
       .hero-right { display: block; }
-      .hero-divider { margin-top: 36px; margin-bottom: 40px; }
-
-      /* About model: extra bottom margin */
+/* About model: extra bottom margin */
       .about-model-head { margin-bottom: clamp(44px, 5vw, 72px); }
 
       /* Trinity: 3-col */
@@ -1086,7 +1092,7 @@
       }
       .phase-tab.active::after { transform: scaleX(1); }
       .phase-tab:hover:not(.active) { opacity: .65; background: none; }
-      .phase-tab-period { font-size: 12px; }
+      .phase-tab-period { font-size: 14px; }
       .phase-tab-name   { font-size: 18px; }
 
       /* Phase panel: 2-col */
@@ -1094,7 +1100,7 @@
         grid-template-columns: 1fr 220px;
         gap: 44px;
         padding: clamp(28px, 3vw, 48px);
-        margin-top: 4px;
+        margin-top: 24px;
       }
 
       /* Gallery: 3-col */
@@ -1132,7 +1138,8 @@
       .hero { padding-top: 148px; }
 
       /* Pricing: 4-col */
-      .pricing-cards { grid-template-columns: repeat(4, 1fr); gap: 16px; }
+      .pricing-cards { grid-template-columns: repeat(4, 1fr); gap: 24px; }
+      .pricing-card.featured { margin-top: 0; }
     }
 
     /* ── XL: 1200px — fixed-width container ── */
@@ -1156,7 +1163,6 @@
 <div class="mobile-nav" id="mobileNav" aria-hidden="true" role="dialog" aria-label="Site menu">
   <ul class="mobile-nav-links">
     <li><a href="#about">About project</a></li>
-    <li><a href="#about">Workshops</a></li>
     <li><a href="#contribution">Contribution</a></li>
     <li><a href="#volunteer">Contact</a></li>
   </ul>
@@ -1175,7 +1181,6 @@
 
     <ul class="nav-links">
       <li><a href="#about">About project</a></li>
-      <li><a href="#about">Workshops</a></li>
       <li><a href="#contribution">Contribution</a></li>
       <li><a href="#volunteer">Contact</a></li>
     </ul>
@@ -1196,10 +1201,9 @@
       <div class="hero-text">
         <div class="hero-label">Kumbalgama South · Sri Lanka</div>
         <h1 class="hero-h1">Turning waste into a <span class="green">future</span> for <span class="italic">Sri Lanka.</span></h1>
-        <p class="hero-sub">We aim to be living proof that <u>human presence</u> can <u>restore land</u> rather than deplete it.</p>
+        <p class="hero-sub">We aim to be living proof that human presence can restore landtrinity rather than deplete it.</p>
       </div>
-      <div class="hero-divider"></div>
-      <div class="hero-actions">
+<div class="hero-actions">
         <a href="#about" class="btn btn-pink">About the project</a>
         <a href="#contribution" class="btn btn-dark">Become a member</a>
       </div>
@@ -1559,14 +1563,14 @@
     </div>
 
     <div class="footer-social">
-      <a href="#" class="social-icon" aria-label="Instagram" target="_blank" rel="noopener">
+      <a href="https://www.instagram.com/flow.state.alchemy/" class="social-icon" aria-label="Instagram" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <rect x="2" y="2" width="20" height="20" rx="5"/>
           <circle cx="12" cy="12" r="5"/>
           <circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/>
         </svg>
       </a>
-      <a href="#" class="social-icon" aria-label="YouTube" target="_blank" rel="noopener">
+      <a href="https://www.youtube.com/@oisinflow-statealchemy" class="social-icon" aria-label="YouTube" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M22.54 6.42A2.78 2.78 0 0 0 20.59 4.47C18.88 4 12 4 12 4S5.12 4 3.41 4.47A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.95C5.12 20 12 20 12 20s6.88 0 8.59-.47a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58Z"/>
           <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="currentColor" stroke="none"/>
@@ -1643,6 +1647,25 @@
 
   mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+
+  // ── Active nav link on scroll ──
+  const navSections = ['about', 'contribution', 'volunteer'];
+  const allNavLinks = document.querySelectorAll('.nav-links a, .mobile-nav-links a');
+
+  function updateActiveLink() {
+    const scrollY = window.scrollY + 120;
+    let activeId = '';
+    navSections.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && el.offsetTop <= scrollY) activeId = id;
+    });
+    allNavLinks.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + activeId);
+    });
+  }
+
+  window.addEventListener('scroll', updateActiveLink, { passive: true });
+  updateActiveLink();
 </script>
 
 </body>
